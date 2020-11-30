@@ -1,5 +1,6 @@
-int CarArraySize, CarCount, i;
+int CarArraySize, CarCount, i, CarStoreSize;
 bool AllNewCarsInitiallyUnlocked, AllNewCarsCanBeDrivenByAI, SortCarsByID, DisappearingWheelsFix, ExpandMemoryPools, AddOnOpponentsPartsFix, WorldCrashFixes;
+void* CarStore;
 
 #include "PresetCarSlot.h"
 
@@ -109,6 +110,44 @@ void __declspec(naked) DoUnlimiterStuffCodeCave()
 	// Write its element count
 	injector::WriteMemory<BYTE>(0x4AC56D, HashesCount, true); // sub_4AC550
 	injector::WriteMemory<BYTE>(0x4AC7BC, HashesCount, true); // PresetCarSlot::FillWithRide
+	/*
+	// Relocate the game's CarStore for stock cars (hope it doesn't break save games)
+	CarStoreSize = (HashesCount - 8) * 0x348;
+	CarStore = (void*)0x75AC60; //malloc(CarStoreSize + 4);
+
+	//injector::WriteMemory(0x4BC190, CarStore, true); // QRCarSelectScreen::BuildSelectableCarList
+	//injector::WriteMemory(0x4BC198, CarStore, true); // QRCarSelectScreen::BuildSelectableCarList
+	injector::WriteMemory(0x4BC177, (BYTE*)CarStore + CarStoreSize, true); // QRCarSelectScreen::BuildSelectableCarList
+	injector::WriteMemory(0x4BC19F, (BYTE*)CarStore + CarStoreSize, true); // QRCarSelectScreen::BuildSelectableCarList
+	injector::WriteMemory(0x4BC2C7, (BYTE*)CarStore + CarStoreSize, true); // QRCarSelectScreen::BuildSelectableCarList
+
+	//injector::WriteMemory(0x4C66F3, CarStore, true); // MainMenuCarCustomize::BuildSelectableCarList
+	//injector::WriteMemory(0x4C6702, CarStore, true); // MainMenuCarCustomize::BuildSelectableCarList
+	injector::WriteMemory(0x4C66D4, (BYTE*)CarStore + CarStoreSize, true); // MainMenuCarCustomize::BuildSelectableCarList
+	injector::WriteMemory(0x4C670A, (BYTE*)CarStore + CarStoreSize, true); // MainMenuCarCustomize::BuildSelectableCarList
+	injector::WriteMemory(0x4C6843, (BYTE*)CarStore + CarStoreSize, true); // MainMenuCarCustomize::BuildSelectableCarList
+
+	// Fix car counts
+	injector::WriteMemory<BYTE>(0x4AB596, HashesCount - 8, true); // cFrontendDatabase::RepaintSecondStable
+	injector::WriteMemory<BYTE>(0x4ABF2D, HashesCount - 8, true); // sub_4ABF10
+	injector::WriteMemory<BYTE>(0x4AC00D, HashesCount - 8, true); // FEPlayerCarDB::FindCustomizableCarByType
+	injector::WriteMemory<BYTE>(0x4AC111, HashesCount - 8, true); // sub_4AC0F0
+	injector::WriteMemory<BYTE>(0x4AC4E5, HashesCount - 8, true); // FEPlayerCarDB::DefaultCustomizableCars
+
+	// Fix where to read the car count from
+	injector::WriteMemory(0x4AB57C, CarStoreSize + 0x2038, true); // cFrontendDatabase::RepaintSecondStable
+	injector::WriteMemory(0x4ABE82, CarStoreSize + 0x2038, true); // sub_4ABE00
+	injector::WriteMemory(0x4ABEC6, CarStoreSize + 0x2038, true); // sub_4ABE90
+	injector::WriteMemory(0x4ABEDD, CarStoreSize + 0x2038, true); // sub_4ABE90
+	injector::WriteMemory(0x4AC073, CarStoreSize + 0x2038, true); // FEPlayerCarDB::FindCarType
+	injector::WriteMemory(0x4AC0B2, CarStoreSize + 0x2038, true); // sub_4AC0B0
+	injector::WriteMemory(0x4AC4B8, CarStoreSize + 0x2038, true); // FEPlayerCarDB::DefaultCustomizableCars
+	injector::WriteMemory(0x4AC4DF, CarStoreSize + 0x2038, true); // FEPlayerCarDB::DefaultCustomizableCars
+	injector::WriteMemory(0x4AC50C, CarStoreSize + 0x2038, true); // FEPlayerCarDB::DefaultCustomizableCars
+	injector::WriteMemory(0x4E0DB3, CarStoreSize + 0x2038, true); // sub_4E0D90
+	injector::WriteMemory(0x4E0F0C, CarStoreSize + 0x2038, true); // sub_4E0D90
+
+	*/
 
 	// Continue
 	_asm popad;
